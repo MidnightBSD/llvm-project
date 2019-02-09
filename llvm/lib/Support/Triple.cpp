@@ -208,6 +208,7 @@ StringRef Triple::getOSTypeName(OSType Kind) {
   case Mesa3D: return "mesa3d";
   case Contiki: return "contiki";
   case AMDPAL: return "amdpal";
+  case MidnightBSD: return "midnightbsd";
   }
 
   llvm_unreachable("Invalid OSType");
@@ -502,6 +503,7 @@ static Triple::OSType parseOS(StringRef OSName) {
     .StartsWith("mesa3d", Triple::Mesa3D)
     .StartsWith("contiki", Triple::Contiki)
     .StartsWith("amdpal", Triple::AMDPAL)
+    .StartsWith("midnightbsd", Triple::MidnightBSD)
     .Default(Triple::UnknownOS);
 }
 

@@ -2167,7 +2167,7 @@ void X86FrameLowering::adjustForSegmentedStacks(
   if (MF.getFunction().isVarArg())
     report_fatal_error("Segmented stacks do not support vararg functions.");
   if (!STI.isTargetLinux() && !STI.isTargetDarwin() && !STI.isTargetWin32() &&
-      !STI.isTargetWin64() && !STI.isTargetFreeBSD() &&
+      !STI.isTargetWin64() && !STI.isTargetFreeBSD() && !STI.isTargetMidnightBSD() &&
       !STI.isTargetDragonFly())
     report_fatal_error("Segmented stacks not supported on this platform.");
 
@@ -2218,7 +2218,7 @@ void X86FrameLowering::adjustForSegmentedStacks(
     } else if (STI.isTargetWin64()) {
       TlsReg = X86::GS;
       TlsOffset = 0x28; // pvArbitrary, reserved for application use
-    } else if (STI.isTargetFreeBSD()) {
+    } else if (STI.isTargetFreeBSD() || STI.isTargetMidnightBSD()) {
       TlsReg = X86::FS;
       TlsOffset = 0x18;
     } else if (STI.isTargetDragonFly()) {
@@ -2249,7 +2249,7 @@ void X86FrameLowering::adjustForSegmentedStacks(
     } else if (STI.isTargetDragonFly()) {
       TlsReg = X86::FS;
       TlsOffset = 0x10; // use tls_tcb.tcb_segstack
-    } else if (STI.isTargetFreeBSD()) {
+    } else if (STI.isTargetFreeBSD() || STI.isTargetMidnightBSD()) {
       report_fatal_error("Segmented stacks not supported on FreeBSD i386.");
     } else {
       report_fatal_error("Segmented stacks not supported on this platform.");

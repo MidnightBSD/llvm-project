@@ -579,6 +579,7 @@ bool MemorySanitizer::doInitialization(Module &M) {
   Triple TargetTriple(M.getTargetTriple());
   switch (TargetTriple.getOS()) {
     case Triple::FreeBSD:
+    case Triple::MidnightBSD:
       switch (TargetTriple.getArch()) {
         case Triple::x86_64:
           MapParams = FreeBSD_X86_MemoryMapParams.bits64;

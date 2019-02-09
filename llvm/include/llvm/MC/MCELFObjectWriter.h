@@ -69,6 +69,7 @@ public:
         return ELF::ELFOSABI_CLOUDABI;
       case Triple::PS4:
       case Triple::FreeBSD:
+      case Triple::MidnightBSD:
         return ELF::ELFOSABI_FREEBSD;
       default:
         return ELF::ELFOSABI_NONE;

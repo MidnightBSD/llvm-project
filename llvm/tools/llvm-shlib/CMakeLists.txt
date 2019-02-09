@@ -40,6 +40,7 @@ list(REMOVE_DUPLICATES LIB_NAMES)
 if(("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux") OR (MINGW) OR (HAIKU)
    OR ("${CMAKE_SYSTEM_NAME}" STREQUAL "FreeBSD")
    OR ("${CMAKE_SYSTEM_NAME}" STREQUAL "DragonFly")
+   OR ("${CMAKE_SYSTEM_NAME}" STREQUAL "MidnightBSD")
    OR ("${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS")) # FIXME: It should be "GNU ld for elf"
   configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/simple_version_script.map.in

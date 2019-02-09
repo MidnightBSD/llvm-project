@@ -791,6 +791,15 @@ EOF
     *:BSD/OS:*:*)
 	echo ${UNAME_MACHINE}-unknown-bsdi${UNAME_RELEASE}
 	exit ;;
+	*:MidnightBSD:*:*)
+	UNAME_PROCESSOR=`/usr/bin/uname -p`
+    case ${UNAME_PROCESSOR} in
+    	amd64)
+    	echo x86_64-unknown-midnightbsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
+    	*)
+    	echo ${UNAME_PROCESSOR}-unknown-midnightbsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
+    esac
+    exit ;;
     *:FreeBSD:*:*)
 	UNAME_PROCESSOR=`/usr/bin/uname -p`
 	case ${UNAME_PROCESSOR} in
