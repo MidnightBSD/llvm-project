@@ -1,4 +1,4 @@
-//===--- FreeBSD.cpp - FreeBSD ToolChain Implementations --------*- C++ -*-===//
+//===--- MidnightBSD.cpp - MidnightBSD ToolChain Implementations --------*- C++ -*-===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "FreeBSD.h"
+#include "MidnightBSD.h"
 #include "Arch/ARM.h"
 #include "Arch/Mips.h"
 #include "Arch/Sparc.h"
@@ -24,7 +24,7 @@ using namespace clang::driver::toolchains;
 using namespace clang;
 using namespace llvm::opt;
 
-void freebsd::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
+void midnightbsd::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
                                       const InputInfo &Output,
                                       const InputInfoList &Inputs,
                                       const ArgList &Args,
@@ -32,7 +32,7 @@ void freebsd::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
 	claimNoWarnArgs(Args);
 	ArgStringList CmdArgs;
 
-	// When building 32-bit code on FreeBSD/amd64, we have to explicitly
+	// When building 32-bit code on MidnightBSD/amd64, we have to explicitly
 	// instruct as in the base system to assemble 32-bit code.
 	switch (getToolChain().getArch()) {
 		default:
@@ -117,13 +117,13 @@ void freebsd::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
 	C.addCommand(llvm::make_unique<Command>(JA, *this, Exec, CmdArgs, Inputs));
 }
 
-void freebsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+void midnightbsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
                                    const InputInfo &Output,
                                    const InputInfoList &Inputs,
                                    const ArgList &Args,
                                    const char *LinkingOutput) const {
-	const toolchains::FreeBSD &ToolChain =
-			static_cast<const toolchains::FreeBSD &>(getToolChain());
+	const toolchains::MidnightBSD &ToolChain =
+			static_cast<const toolchains::MidnightBSD &>(getToolChain());
 	const Driver &D = ToolChain.getDriver();
 	const llvm::Triple::ArchType Arch = ToolChain.getArch();
 	const bool IsPIE =
@@ -166,7 +166,7 @@ void freebsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
 		CmdArgs.push_back("--enable-new-dtags");
 	}
 
-	// When building 32-bit code on FreeBSD/amd64, we have to explicitly
+	// When building 32-bit code on MidnightBSD/amd64, we have to explicitly
 	// instruct ld in the base system to link 32-bit code.
 	if (Arch == llvm::Triple::x86) {
 		CmdArgs.push_back("-m");
@@ -308,9 +308,9 @@ void freebsd::Linker::ConstructJob(Compilation &C, const JobAction &JA,
 	C.addCommand(llvm::make_unique<Command>(JA, *this, Exec, CmdArgs, Inputs));
 }
 
-/// FreeBSD - FreeBSD tool chain which can call as(1) and ld(1) directly.
+/// MidnightBSD - MidnightBSD tool chain which can call as(1) and ld(1) directly.
 
-FreeBSD::FreeBSD(const Driver &D, const llvm::Triple &Triple,
+MidnightBSD::MidnightBSD(const Driver &D, const llvm::Triple &Triple,
                  const ArgList &Args)
 		: Generic_ELF(D, Triple, Args) {
 
@@ -324,20 +324,20 @@ FreeBSD::FreeBSD(const Driver &D, const llvm::Triple &Triple,
 		getFilePaths().push_back(getDriver().SysRoot + "/usr/lib");
 }
 
-ToolChain::CXXStdlibType FreeBSD::GetDefaultCXXStdlibType() const {
+ToolChain::CXXStdlibType MidnightBSD::GetDefaultCXXStdlibType() const {
 	if (getTriple().getOSMajorVersion() >= 10)
 		return ToolChain::CST_Libcxx;
 	return ToolChain::CST_Libstdcxx;
 }
 
-void FreeBSD::addLibStdCxxIncludePaths(
+void MidnightBSD::addLibStdCxxIncludePaths(
 		const llvm::opt::ArgList &DriverArgs,
 		llvm::opt::ArgStringList &CC1Args) const {
 	addLibStdCXXIncludePaths(getDriver().SysRoot, "/usr/include/c++/4.2", "", "",
 	                         "", "", DriverArgs, CC1Args);
 }
 
-void FreeBSD::AddCXXStdlibLibArgs(const ArgList &Args,
+void MidnightBSD::AddCXXStdlibLibArgs(const ArgList &Args,
                                   ArgStringList &CmdArgs) const {
 	CXXStdlibType Type = GetCXXStdlibType(Args);
 	bool Profiling = Args.hasArg(options::OPT_pg);
@@ -353,14 +353,14 @@ void FreeBSD::AddCXXStdlibLibArgs(const ArgList &Args,
 	}
 }
 
-Tool *FreeBSD::buildAssembler() const {
-	return new tools::freebsd::Assembler(*this);
+Tool *MidnightBSD::buildAssembler() const {
+	return new tools::midnightbsd::Assembler(*this);
 }
 
-Tool *FreeBSD::buildLinker() const { return new tools::freebsd::Linker(*this); }
+Tool *MidnightBSD::buildLinker() const { return new tools::midnightbsd::Linker(*this); }
 
-llvm::ExceptionHandling FreeBSD::GetExceptionModel(const ArgList &Args) const {
-	// FreeBSD uses SjLj exceptions on ARM oabi.
+llvm::ExceptionHandling MidnightBSD::GetExceptionModel(const ArgList &Args) const {
+	// MidnightBSD uses SjLj exceptions on ARM oabi.
 	switch (getTriple().getEnvironment()) {
 		case llvm::Triple::GNUEABIHF:
 		case llvm::Triple::GNUEABI:
@@ -374,11 +374,11 @@ llvm::ExceptionHandling FreeBSD::GetExceptionModel(const ArgList &Args) const {
 	}
 }
 
-bool FreeBSD::HasNativeLLVMSupport() const { return true; }
+bool MidnightBSD::HasNativeLLVMSupport() const { return true; }
 
-bool FreeBSD::isPIEDefault() const { return getSanitizerArgs().requiresPIE(); }
+bool MidnightBSD::isPIEDefault() const { return getSanitizerArgs().requiresPIE(); }
 
-SanitizerMask FreeBSD::getSupportedSanitizers() const {
+SanitizerMask MidnightBSD::getSupportedSanitizers() const {
 	const bool IsX86 = getTriple().getArch() == llvm::Triple::x86;
 	const bool IsX86_64 = getTriple().getArch() == llvm::Triple::x86_64;
 	const bool IsMIPS64 = getTriple().getArch() == llvm::Triple::mips64 ||

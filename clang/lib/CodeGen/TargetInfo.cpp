@@ -1916,6 +1916,7 @@ bool X86_32TargetCodeGenInfo::isStructReturnInRegABI(
   switch (Triple.getOS()) {
   case llvm::Triple::DragonFly:
   case llvm::Triple::FreeBSD:
+  case llvm::Triple::MidnightBSD:
   case llvm::Triple::OpenBSD:
   case llvm::Triple::Win32:
     return true;
